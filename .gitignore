@@ -11,4 +11,4 @@ npm-debug.log
 .npm
 
 # dist files
-dist
+lib

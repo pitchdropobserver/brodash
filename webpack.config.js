@@ -11,13 +11,13 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 module.exports = {
 	entry: path.join(__dirname, 'examples/src/index.js'), // Resolve source dependencies using examples/src/index.js as a starting point
 	output: {
-		path: path.join(__dirname, 'examples/dist'), // does not effect dev server
+		path: path.join(__dirname, 'examples/lib'), // does not effect dev server
 		filename: 'index.js'
 	},
 	module: {
 		rules: [ 
 			{ test: /\.css$/, use: ['style-loader', 'css-loader']},
-			{ test: /\.ts(x?)$/, use: 'ts-loader' },
+			// { test: /\.ts(x?)$/, use: 'ts-loader' },
 			{ test: /\.json$/, use: 'json-loader' },	
 			{ test: /\.(js|jsx)$/, use: 'babel-loader', exclude: /node_modules/ },						
 		]
