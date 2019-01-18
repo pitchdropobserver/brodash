@@ -2,7 +2,7 @@ import { asyncPromLoop } from './_asyncPromLoop'
 
 var dt, smallestLatencyObserved = Infinity  // lowest record of roundTripLatency polled
 
-export class ClockPoll {
+class ClockPoll {
 	constructor(){
 		this.last = undefined
 		this.dt = undefined
@@ -158,3 +158,4 @@ export class ClockPoll {
 	}
 }
 
+export const clockPoll = new ClockPoll()
