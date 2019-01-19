@@ -1,3 +1,5 @@
+import { calcSvgArcPath } from '../_svg'
+
 export function calcArcStart(cx, cy, prevEdge, bubbleArmPrev){
 	let x, y
 	if(
@@ -157,29 +159,6 @@ export function calcBubbleSvgPath(arrBubbleArcParams){
 	return strSvgPath
 }
 
-export function calcSvgArcPath(start, end, radius, withStart = true){
-	let strSvgPath = ''
-	if(withStart){
-		// move pen to arc start
-		strSvgPath += [
-			'M',
-			start.x,
-			start.y,
-		].join(' ')
-	}
-	// arc path
-	strSvgPath += [
-		'A', // A
-		radius, // rx -> arc radius x
-		radius, // ry -> arc radius y
-		0, // x-axis-rotation
-		0, // large-arc-flag
-		1, // sweep-flag
-		end.x, // x -> arc end x
-		end.y, // y -> arc end y
-	].join(' ')
-	return strSvgPath
-}
 
 export function getBubbleSvgPathFromPts(arrNodes, offsetFromNodeRadius){
 	return calcBubbleSvgPath(

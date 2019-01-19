@@ -68,3 +68,15 @@ export function getPrecisionFormattedText(val, precision = 0){
 		return roundTo(val, precision).toString()
 	}
 }
+
+/**
+ * Translate a value into unit interval based on its expected range
+ * @param {number} val - A value
+ * @param {number} range_min - Minimum possible value
+ * @param {number} range_max - Maximum possible value
+ * @return {number} - A value between 0 - 1
+ */
+export function reMapToUnitInterval(val, range_min, range_max) {
+	const relativePct = (val - range_min) / (range_max - range_min)
+	return capBtw(0, relativePct, 1.0)
+}

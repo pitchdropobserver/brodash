@@ -217,9 +217,7 @@ export function divLineEscalator(line, numSegOnLine, mostSegsXorY, outputFormat)
 	}
 }
 
-export function divCircByNumSeg(op){
-	const { numPts, center, radius } = op
-	const offset = op.offset ? op.offset : 0
+export function divCircByNumSeg(center, radius, numPts, offset = 0){
 	const arrTValues = findRangeValues(0, 2*Math.PI, numPts, offset)
 	function findRangeValues(tFloor, tCeil, int, offset){
 		let unit = (tCeil - tFloor) / int
