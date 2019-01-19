@@ -1,4 +1,5 @@
 export * from './_geometry'
+export * from './_svg'
 export * from './_asyncPromLoop'
 export * from './_classes'
 export * from './_ClockPoll'
