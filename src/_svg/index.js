@@ -2,11 +2,11 @@ import {
 	XMLNS_SVG,
 } from '../_constants'
 
-export function createSvgArrowShapePath(w, h){
+export function createSvgArrowShapePath(w, h) {
 	const pts = [
-		{x:0, y:0},
-		{x:w, y:h/2},
-		{x:0, y:h}
+		{ x: 0, y: 0 },
+		{ x: w, y: h / 2 },
+		{ x: 0, y: h }
 	]
 	return [
 		'M', pts[0].x, pts[0].y,
@@ -16,7 +16,7 @@ export function createSvgArrowShapePath(w, h){
 	].join(' ')
 }
 
-export function createSvgElement(tag, parentDom){
+export function createSvgElement(tag, parentDom) {
 	const elem = document.createElementNS(XMLNS_SVG, tag)
 	parentDom.appendChild(elem)
 	return elem
