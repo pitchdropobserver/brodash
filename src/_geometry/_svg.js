@@ -21,3 +21,16 @@ export function createSvgElement(tag, parentDom){
 	parentDom.appendChild(elem)
 	return elem
 }
+
+
+/**
+ * Convert a svg points string to an array of values
+ * @param {string} pointsAttr - Array of string
+ * @return {Array} - Array of numeric values 
+ */
+export function plinePtConvert(pointsAttr) {
+	if (Array.isArray(pointsAttr)) return pointsAttr
+	if (typeof pointsAttr === 'string') {
+		return pointsAttr.split(/[\s,]+/).map(str => Number(str))
+	}
+}

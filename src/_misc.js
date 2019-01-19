@@ -117,11 +117,19 @@ export function getValType(val){
 	return mapValTypes[typeof val].call(null, val)
 }
 
-
-export function purgeOwnKeys(obj){
-	for (let key in obj) { // purge own keys
+/**
+ * Purge object's own keys
+ * @param {Object} obj - An object
+ */
+export function purgeOwnKeys(obj, shouldDelete) {
+	let key
+	for (key in obj) { // purge own keys
 		if (obj.hasOwnProperty(key)) {
-			Reflect.deleteProperty(obj, key)
+			if (shouldDelete) { // delete ref and key...
+				Reflect.deleteProperty(obj, key)
+			} else { // release reference...
+				obj[key] = undefined
+			}
 		}
 	}
 }
