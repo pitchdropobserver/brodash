@@ -1,4 +1,4 @@
-import { getValType } from './_misc'
+import { getValType, isObj } from './_misc'
 
 export function objOrArr(obj){
 	if(Array.isArray(obj)){ // if array
@@ -43,6 +43,20 @@ export function deepCopyArray(array, objFilter){
 	})
 }
 
+/**
+ * Shallow copy an object. Otionally skipping over provided keys.
+ * @param {Object} obj - Object to be copied
+ * @param {...string} skippedKeys - Lists of keys to skip over
+ * @return {Object} - New object
+ */
+export function copy(obj, ...skippedKeys) {
+	return Object.keys(obj).reduce((prev, key)=>{
+		if (skippedKeys.indexOf(key) === -1){ // if not blacklisted...
+			prev[key] = obj[key] // assign directly
+		}
+		return prev
+	}, {})
+}
 
 /**
  *
@@ -79,6 +93,65 @@ export function deepCopyObj(obj, objFilter){
 	}
 }
 
+/**
+ * Merge two object, if a key exists on both object whose value are also both objects, then recursively merge them again.
+ * @param {Object} first - Object to merge into
+ * @param {Object} second - Object to merge from
+ * @param  {...string} specialKeys - keys assigned directly from 2nd to 1st
+ */
+export function deepMergeTwoObjs(first, second, ...specialKeys){
+	if (arguments.length < 2) throw 'Methods requires 2 objects!'
+	if (isObj(first) && isObj(second)){
+		Object.keys(second).forEach((keyOn2nd) => {
+			if (specialKeys.indexOf(keyOn2nd) === -1){ // not blacklisted...
+				if (isObj(second[keyOn2nd])) {
+					if (isObj(first[keyOn2nd])) {
+						// val on both are objects
+						deepMergeTwoObjs(first[keyOn2nd], second[keyOn2nd])
+					} else {
+						// val on 2nd is obj, not 1st
+						first[keyOn2nd] = second[keyOn2nd]
+					}
+				} else {
+					// val on 2nd is not obj
+					first[keyOn2nd] = second[keyOn2nd]
+				}
+			} else { // is a key to assign directly
+				first[keyOn2nd] = second[keyOn2nd]
+			}		
+		})
+		return first
+	} else {
+		throw "First two arguments must be objects!"
+	}
+}
+
+
+
+export function deepMerge(){
+	const args = Array.from(arguments)
+	switch (args.length) {
+		case 0: // no argument provided...
+			throw 'Methods requires 2 or more objects!'
+		case 1: // one argument...
+			return args[0]
+		default: { // two or more arguments...
+			let first, current, next
+			for (let i = 0; i < args.length - 1; i++) {
+				first = args[0]
+				current = args[i]
+				next = args[i+1]
+				if (isObj(current) && isObj(next)){
+					Object.keys(current)
+
+
+				}				
+			}
+		}
+	}
+
+}
+
 // convert arr of pt-objs into arr of str
 export function arrPts2Str(arrPts){
 	return arrPts.map(function(pt){
@@ -89,8 +162,6 @@ export function arrPts2Str(arrPts){
 	// 	return prev
 	// },[])
 }
-
-
 
 // loop through arr 2d, do something, get results in arr 1d
 // callback recieves current obj, index

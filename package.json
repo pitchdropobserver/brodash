@@ -1,19 +1,21 @@
 {
   "name": "brodash",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",	
+  "types": "lib/index.d.ts",
   "check-types": "tsc",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
     "deploy": "gh-pages -d examples/lib",
-	"publish-demo": "npm run build && npm run deploy",
-	"prepare": "npm run build-js",
-	"build-types": "tsc --emitDeclarationOnly",
+    "publish-demo": "npm run build && npm run deploy",
+    "prepare": "npm run build-js",
+    "build-types": "tsc --emitDeclarationOnly",
     "build-js": "babel src --out-dir lib --extensions \".js,.ts,.tsx\" --source-maps inline"
   },
   "repository": {

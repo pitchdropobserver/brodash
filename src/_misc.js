@@ -117,6 +117,11 @@ export function getValType(val){
 	return mapValTypes[typeof val].call(null, val)
 }
 
+export function isObj(val){
+	return getValType(val) === 'object'
+}
+
+
 /**
  * Purge object's own keys
  * @param {Object} obj - An object
