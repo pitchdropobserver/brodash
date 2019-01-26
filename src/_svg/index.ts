@@ -3,7 +3,7 @@ import {
 } from '../_constants'
 import {
 	IPt,
-} from '../interfaces'
+} from '../_interfaces'
 
 export function createSvgArrowShapePath(w: number, h: number): string {
 	const pts = [
@@ -19,8 +19,8 @@ export function createSvgArrowShapePath(w: number, h: number): string {
 	].join(' ')
 }
 
-export function createSvgElement(tag: string, parentDom: HTMLElement): HTMLElement {
-	const elem = document.createElementNS(XMLNS_SVG, tag)
+export function createSvgElement(tag: string, parentDom: HTMLElement): Element {
+	const elem: Element = document.createElementNS(XMLNS_SVG, tag)
 	parentDom.appendChild(elem)
 	return elem
 }

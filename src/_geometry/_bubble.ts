@@ -1,4 +1,4 @@
-import { IPt } from '../interfaces'
+import { IPt } from '../_interfaces'
 import { calcSvgArcPath } from '../_svg'
 
 type Edge = {

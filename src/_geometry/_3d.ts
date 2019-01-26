@@ -1,4 +1,4 @@
-import { IPt3d } from '../interfaces'
+import { IPt3d } from '../_interfaces'
 
 export function createPlaneOfPts(type: string, center: IPt3d, w: number, sideCount: number): Array<IPt3d> {
 	const gap: number = w / (sideCount - 1)

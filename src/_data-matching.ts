@@ -1,4 +1,4 @@
-import { ILine, IPt } from './interfaces'
+import { ILine, IPt } from './_interfaces'
 
 // give array of pts, return all non-overlapping lines between nodes
 export function linesLongestListWithin(arrPts: Array<IPt>): Array<ILine>{

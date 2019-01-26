@@ -1,4 +1,4 @@
-import { IPt } from '../interfaces'
+import { IPt } from '../_interfaces'
 
 export class Grid {
 	

@@ -1,4 +1,4 @@
-import { IRgb, IRgba, ObjStringVal } from './interfaces'
+import { IRgb, IRgba, ObjStringVal } from './_interfaces'
 
 export function rgbToHex(r: number, g: number, b: number): string{
 	const R: string = r.toString(16)
