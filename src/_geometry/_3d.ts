@@ -1,14 +1,14 @@
-export function createPlaneOfPts(type, center, w, sideCount) {
-	const gap = w / (sideCount - 1)
-	const arrPts = []
-	let origin
+import { IPt3d } from '../interfaces'
+
+export function createPlaneOfPts(type: string, center: IPt3d, w: number, sideCount: number): Array<IPt3d> {
+	const gap: number = w / (sideCount - 1)
+	const arrPts: Array<IPt3d> = []
+	const origin: IPt3d = { x:0, y:0, z:0 }
 	switch (type) {
 		case 'yz':
-			origin = {
-				x: center.x,
-				y: center.y - w / 2,
-				z: center.z - w / 2,
-			}
+			origin.x = center.x
+			origin.y = center.y - w / 2
+			origin.z = center.z - w / 2
 			for (let i = 0; i < sideCount; i++) {
 				for (let j = 0; j < sideCount; j++) {
 					arrPts.push({
@@ -20,11 +20,9 @@ export function createPlaneOfPts(type, center, w, sideCount) {
 			}
 			break
 		case 'xz':
-			origin = {
-				x: center.x - w / 2,
-				y: center.y,
-				z: center.z - w / 2,
-			}
+			origin.x = center.x - w / 2
+			origin.y = center.y
+			origin.z = center.z - w / 2
 			for (let i = 0; i < sideCount; i++) {
 				for (let j = 0; j < sideCount; j++) {
 					arrPts.push({
@@ -36,11 +34,9 @@ export function createPlaneOfPts(type, center, w, sideCount) {
 			}
 			break
 		case 'xy':
-			origin = {
-				x: center.x - w / 2,
-				y: center.y - w / 2,
-				z: center.z,
-			}
+			origin.x = center.x - w / 2
+			origin.y = center.y - w / 2
+			origin.z = center.z
 			for (let i = 0; i < sideCount; i++) {
 				for (let j = 0; j < sideCount; j++) {
 					arrPts.push({
@@ -55,22 +51,36 @@ export function createPlaneOfPts(type, center, w, sideCount) {
 	return arrPts
 }
 
+type Box = {
+	range: any
+}
 
-export function isPtInBox(pt, box) {
+export function isPtInBox(pt: IPt3d, box: Box): boolean {
 	// console.log('box.range.x',box.range.x)
 	// console.log('box.range.y',box.range.y)
 	// console.log('box.range.z',box.range.z)
-	if (pt.x >= box.range.x.min && pt.x <= box.range.x.max) {
-		if (pt.y >= box.range.y.min && pt.y <= box.range.y.max) {
-			if (pt.z >= box.range.z.min && pt.z <= box.range.z.max) {
-				return true
-			}
-		}
-	}
+	return (
+		pt.x >= box.range.x.min && pt.x <= box.range.x.max
+		&& pt.y >= box.range.y.min && pt.y <= box.range.y.max
+		&& pt.z >= box.range.z.min && pt.z <= box.range.z.max
+	)
 }
 
 
-export function createCube(center, width, length, height) {
+type Cube = {
+	arrPts: Array<IPt3d>
+	oEdges: {
+		[index: string]: Array<IPt3d>
+	}
+	range: {
+		x: Object
+		y: Object
+		z: Object
+	}
+	arrEdges: Array<Array<IPt3d>>
+}
+
+export function createCube(center: IPt3d, width: number, length: number, height: number): Cube {
 
 	const w = width
 	const l = length ? length : width
@@ -125,17 +135,18 @@ export function createCube(center, width, length, height) {
 }
 
 
-export function createCubeOfPts(center, w, sideCount) {
-	const arrCubePts = []
-	const gap = w / (sideCount - 1)
-	const origin = {
+export function createCubeOfPts(center: IPt3d, w: number, sideCount: number): Array<IPt3d> {
+	const arrCubePts: Array<IPt3d> = []
+	const gap: number = w / (sideCount - 1)
+	const origin: IPt3d = {
 		x: center.x - w / 2,
 		y: center.y - w / 2,
 		z: center.z - w / 2,
 	}
-	for (let i = 0; i < sideCount; i++) {
-		for (let j = 0; j < sideCount; j++) {
-			for (let k = 0; k < sideCount; k++) {
+	let i: number, j: number, k: number
+	for (i = 0; i < sideCount; i++) {
+		for (j = 0; j < sideCount; j++) {
+			for (k = 0; k < sideCount; k++) {
 				arrCubePts.push({
 					x: origin.x + gap * i,
 					y: origin.y + gap * j,
@@ -147,19 +158,8 @@ export function createCubeOfPts(center, w, sideCount) {
 	return arrCubePts
 }
 
-export function ConstructorBezierCurve(pt0, pt1, pt2) {
-	this.arrCtrlPts = [pt0, pt1, pt2],
-		// console.log(pt0,pt1,pt2)
-		this.getPtOnCrv = function (t) {
-			return {
-				x: (1 - t) * (1 - t) * pt0.x + 2 * (1 - t) * t * pt1.x + t * t * pt2.x,
-				y: (1 - t) * (1 - t) * pt0.y + 2 * (1 - t) * t * pt1.y + t * t * pt2.y,
-				z: (1 - t) * (1 - t) * pt0.z + 2 * (1 - t) * t * pt1.z + t * t * pt2.z,
-			}
-		}
-}
 
-export function xyzToArray(xyz) {
+export function xyzToArray(xyz: any) {
 	if (Array.isArray(xyz)) {
 		return xyz
 	} else {
