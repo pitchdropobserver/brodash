@@ -1,8 +1,11 @@
 import {
 	XMLNS_SVG,
 } from '../_constants'
+import {
+	IPt,
+} from '../interfaces'
 
-export function createSvgArrowShapePath(w, h) {
+export function createSvgArrowShapePath(w: number, h: number): string {
 	const pts = [
 		{ x: 0, y: 0 },
 		{ x: w, y: h / 2 },
@@ -16,19 +19,18 @@ export function createSvgArrowShapePath(w, h) {
 	].join(' ')
 }
 
-export function createSvgElement(tag, parentDom) {
+export function createSvgElement(tag: string, parentDom: HTMLElement): HTMLElement {
 	const elem = document.createElementNS(XMLNS_SVG, tag)
 	parentDom.appendChild(elem)
 	return elem
 }
-
 
 /**
  * Convert a svg points string to an array of values
  * @param {string} pointsAttr - Array of string
  * @return {Array} - Array of numeric values 
  */
-export function plinePtConvert(pointsAttr) {
+export function plinePtConvert(pointsAttr: string| string[]): number[]|string[]|undefined {
 	if (Array.isArray(pointsAttr)) return pointsAttr
 	if (typeof pointsAttr === 'string') {
 		return pointsAttr.split(/[\s,]+/).map(str => Number(str))
@@ -36,7 +38,7 @@ export function plinePtConvert(pointsAttr) {
 }
 
 
-export function calcSvgArcPath(start, end, radius, withStart = true) {
+export function calcSvgArcPath(start: IPt, end: IPt, radius: number, withStart:boolean = true): string {
 	let strSvgPath = ''
 	if (withStart) {
 		// move pen to arc start
@@ -61,16 +63,11 @@ export function calcSvgArcPath(start, end, radius, withStart = true) {
 }
 
 
-interface iPt {
-	x: number
-	y: number
-}
-
 /**
  * Convert an array of pts into a svg points attribute string
  * @param {Array} pts - Array of points with x, y keys
  * @return {string} - A svg points attribute string eg. "10,20 50,60"
  */
-export function arrPtsToSvgPointsAttr(pts: Array<iPt>): string{
+export function arrPtsToSvgPointsAttr(pts: Array<IPt>): string {
 	return pts.map(pt => pt.x + ',' + pt.y).join(' ')
 }
