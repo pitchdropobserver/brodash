@@ -13,8 +13,8 @@ export class Copiable {
 	constructor(obj: Object){
 		Object.assign(this, obj)
 	}
-	copy(){
-		return Object.assign({}, this, ...arguments)
+	copy(...arg){
+		return Object.assign({}, this, ...arg)
 	}
 }
 

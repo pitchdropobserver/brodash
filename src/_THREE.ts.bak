@@ -1,5 +1,3 @@
- 
-
 export const schemaTHREEBoxGeo = {
 	top:{
 		triFaceIndexes:[8,9],
@@ -27,12 +25,10 @@ export const schemaTHREEBoxGeo = {
 	},
 }
 
-export function mapTHREEBoxGeoVertToQuads(verts){
+export function mapTHREEBoxGeoVertToQuads<T>(verts: T[]): Object {
 	// per face, vertices are ordered via order of trignometry quadrants, ie. counterclockwise from top right corner
 	return Object.keys(schemaTHREEBoxGeo).reduce(function(prev, faceName){
-		prev[faceName] = schemaTHREEBoxGeo[faceName].vertIndexes.map(function(index){
-			return verts[index]
-		})
+		prev[faceName] = schemaTHREEBoxGeo[faceName].vertIndexes.map(index => verts[index])
 		return prev
 	},{})
 	// return {
@@ -45,34 +41,34 @@ export function mapTHREEBoxGeoVertToQuads(verts){
 	// }
 }
 
-export function tempToTHREEMat(template){
-	const THREEparam = Object.keys(template.param).reduce(function(prevParam, paramKey) {
-		const templateParam = template.param[paramKey]
-		if(templateParam.hasOwnProperty('val')){ // templateParam -> object
-			switch (paramKey) {
-				case 'color':
-					prevParam[paramKey] = parseInt(templateParam.val, 16)
-					break
-				default:
-					prevParam[paramKey] = templateParam.val
-			}
-		} else { // templateParam -> value
-			if(
-				paramKey === 'side' ||
-				paramKey === 'shading'
-			){
-				// ie. 'DoubleSide' --> THREE.DoubleSide
-				prevParam[paramKey] = THREE[templateParam]
-			} else if(paramKey === 'color'){
-				prevParam[paramKey] = parseInt(templateParam,16)
-			} else {
-				prevParam[paramKey] = templateParam
-			}
-		}
-		return prevParam
-	},{})
-	return new THREE[template.THREEMaterialType](THREEparam)
-}
+// export function tempToTHREEMat(template: { param: Object }){
+// 	const THREEparam = Object.keys(template.param).reduce(function(prevParam, paramKey) {
+// 		const tempParam = template.param[paramKey]
+// 		if(tempParam.hasOwnProperty('val')){ // tempParam -> object
+// 			switch (paramKey) {
+// 				case 'color':
+// 					prevParam[paramKey] = parseInt(tempParam.val, 16)
+// 					break
+// 				default:
+// 					prevParam[paramKey] = tempParam.val
+// 			}
+// 		} else { // tempParam -> value
+// 			if(
+// 				paramKey === 'side' ||
+// 				paramKey === 'shading'
+// 			){
+// 				// ie. 'DoubleSide' --> THREE.DoubleSide
+// 				prevParam[paramKey] = THREE[tempParam]
+// 			} else if(paramKey === 'color'){
+// 				prevParam[paramKey] = parseInt(tempParam,16)
+// 			} else {
+// 				prevParam[paramKey] = tempParam
+// 			}
+// 		}
+// 		return prevParam
+// 	},{})
+// 	return new THREE[template.THREEMaterialType](THREEparam)
+// }
 
 export function createPointHelper(optn){
 	const { scene, pos, ptSize } = optn

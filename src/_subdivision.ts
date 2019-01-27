@@ -1,3 +1,4 @@
+import { IPt, IVec3d, ILine } from './_interfaces'
 import {
 	subVectors,
 	normalizeVector,
@@ -6,37 +7,38 @@ import {
 	addVectors,
 } from './_vectors'
 
-export function ptsOnSphere(numPts, radius){
-    const arrPts = []
-    const inc = Math.PI * (3 - Math.sqrt(5))
-    const off = 2.0 / numPts
-    let x, y, z, r, phi
-    for (let k = 0; k < numPts; k++){
-        y = k * off - 1 + (off / 2)
-        r = Math.sqrt(1 - y * y)
-        phi = k * inc
-        x = Math.cos(phi) * r
-        z = Math.sin(phi) * r
-        arrPts.push({
+export function ptsOnSphere(numPts: number, radius: number): IPt[] {
+	const arrPts: IPt[] = []
+	const inc: number = Math.PI * (3 - Math.sqrt(5))
+	const off: number = 2.0 / numPts
+	let x: number, y: number, z: number, r: number, phi: number
+	for (let k = 0; k < numPts; k++){
+		y = k * off - 1 + (off / 2)
+		r = Math.sqrt(1 - y * y)
+		phi = k * inc
+		x = Math.cos(phi) * r
+		z = Math.sin(phi) * r
+		arrPts.push({
 			x: x * radius * 2,
 			y: y * radius * 2,
 			z: z * radius * 2,
 		})
-    }
+	}
 	return arrPts
 }
 
-export function subdivPlanarQuad(verts, numDivAxis1, numDivAxis2 ){
-	const origin = verts[0]
-	const axis1 = subVectors( verts[1], origin)
-	const axis2 = subVectors( verts[3], origin)
-	const uAxis1 = Object.assign({},axis1)
+export function subdivPlanarQuad(verts: IVec3d[], numDivAxis1: number, numDivAxis2: number): IVec3d[] {
+	const origin: IVec3d = verts[0]
+	const axis1: IVec3d = subVectors( verts[1], origin)
+	const axis2: IVec3d = subVectors( verts[3], origin)
+	const uAxis1: IVec3d = Object.assign({},axis1)
 	normalizeVector(uAxis1)
-	const uAxis2 = Object.assign({},axis2)
+	const uAxis2: IVec3d = Object.assign({},axis2)
 	normalizeVector(uAxis2)
-	const stepLen1 = getVecLen(axis1)/numDivAxis1
-	const stepLen2 = getVecLen(axis2)/numDivAxis2
-	let v1, vStep1, vStep2, arrPts = []
+	const stepLen1: number = getVecLen(axis1) / numDivAxis1
+	const stepLen2: number = getVecLen(axis2) / numDivAxis2
+	const arrPts: IVec3d[] = []
+	let v1: IVec3d, vStep1: IVec3d, vStep2: IVec3d
 	for (let i = 0; i <= numDivAxis1; i++) {
 		vStep1 = Object.assign({},uAxis1)
 		setScalar(vStep1, stepLen1 * i)
@@ -54,22 +56,22 @@ export function subdivPlanarQuad(verts, numDivAxis1, numDivAxis2 ){
 	return arrPts
 }
 
-export function divLineByLen(line,len){
-	const lineIs3D = (line.z1 === undefined) ? false : true
+export function divLineByLen(line: ILine, len: number): IPt[] {
+	const is3dLine: boolean = line.z1 !== undefined
 	// divides line into eqidistance given len
-	const lineLen = (lineIs3D)?
+	const lineLen: number = is3dLine ?
 	Math.sqrt(Math.pow(line.x2 - line.x1, 2) + Math.pow(line.y2 - line.y1, 2) + Math.pow(line.z2 - line.z1, 2))
 	: Math.sqrt(Math.pow(line.x2 - line.x1, 2) + Math.pow(line.y2 - line.y1, 2))
 
-	const numPts = Math.ceil(lineLen / len) // must round up here
-	const unitX = (line.x2 - line.x1) / numPts
-	const unitY = (line.y2 - line.y1) / numPts
-	const unitZ = (lineIs3D)? (line.z2 - line.z1) / numPts : 0
+	const numPts: number = Math.ceil(lineLen / len) // must round up here
+	const unitX: number = (line.x2 - line.x1) / numPts
+	const unitY: number = (line.y2 - line.y1) / numPts
+	const unitZ: number = (is3dLine)? (line.z2 - line.z1) / numPts : 0
 
-	const pts = []
-	let pt
+	const arrPts: IPt[] = []
+	let pt: IPt
 	for (let i = 0; i < numPts; i++){
-		pt = (lineIs3D)? {
+		pt = (is3dLine)? {
 			x:line.x1 + unitX * i ,
 			y:line.y1 + unitY * i ,
 			z:line.z1 + unitZ * i ,
@@ -77,23 +79,20 @@ export function divLineByLen(line,len){
 			x:line.x1 + unitX * i ,
 			y:line.y1 + unitY * i ,
 		}
-		pts.push(pt)
+		arrPts.push(pt)
 	}
-	const lastPt = (lineIs3D)? {x:line.x2, y:line.y2, z:line.z2} : {x:line.x2, y:line.y2}
-	pts.push(lastPt)
-	return pts
+	const lastPt: IPt = is3dLine ? {x:line.x2, y:line.y2, z:line.z2} : {x:line.x2, y:line.y2}
+	arrPts.push(lastPt)
+	return arrPts
 }
 
 /**
- * divide line into int segments, return arrPts
- *
+ * divide line into int segments, return array of points
  */
-export function divLineByNumSeg(line, numSeg){
-	let segX = (line.x2 - line.x1)/numSeg
-	let segY = (line.y2 - line.y1)/numSeg
-
-	let arrPts = [{x:line.x1, y:line.y1}]
-
+export function divLineByNumSeg(line: ILine, numSeg: number): IPt[] {
+	const segX: number = (line.x2 - line.x1) / numSeg
+	const segY: number = (line.y2 - line.y1) / numSeg
+	const arrPts: IPt[] = [{ x:line.x1, y:line.y1 }]
 	for (let i = 1; i < numSeg; i++){
 		arrPts.push({
 			x:line.x1 + segX * i,
@@ -107,12 +106,10 @@ export function divLineByNumSeg(line, numSeg){
 	return arrPts
 }
 
-export function divLineByNumNodes(line, numNodes){
-	let segX = (line.x2 - line.x1)/(numNodes - 1)
-	let segY = (line.y2 - line.y1)/(numNodes - 1)
-
-	let arrPts = [{x:line.x1, y:line.y1}]
-
+export function divLineByNumNodes(line: ILine, numNodes: number): IPt[] {
+	const segX: number = (line.x2 - line.x1) / (numNodes - 1)
+	const segY: number = (line.y2 - line.y1) / (numNodes - 1)
+	const arrPts: IPt[] = [{ x:line.x1, y:line.y1 }]
 	for (let i = 1; i < numNodes-1; i++){
 		arrPts.push({
 			x:line.x1 + segX * i,
@@ -134,16 +131,16 @@ export function divLineByNumNodes(line, numNodes){
  * numSegOnLine = numSteps / 2 + 0.5
  * stepSeg = numSegOnLine + 1 OR numSteps * 2
  */
-export function divLineEscalator(line, numSegOnLine, mostSegsXorY, outputFormat){
-	const dx = (line.x2 - line.x1)
-	const dy = (line.y2 - line.y1)
-	const numSteps = (numSegOnLine + 1) * 0.5
-	const numStepSeg = numSteps * 2  // 2 stepSegs make 1 step
+export function divLineEscalator(line: ILine, numSegOnLine: number, mostSegsXorY: string, outputFormat?: string): number[][] | IPt[] | string {
+	const dx: number = line.x2 - line.x1
+	const dy: number = line.y2 - line.y1
+	const numSteps: number = (numSegOnLine + 1) * 0.5
+	const numStepSeg: number = numSteps * 2  // 2 stepSegs make 1 step
 	// delta btw halves = 0 when numSegOnLine is odd
-	const smallerHalf = Math.floor(numStepSeg / 2)
-	const biggerHalf = numStepSeg - smallerHalf
+	const smallerHalf: number = Math.floor(numStepSeg / 2)
+	const biggerHalf: number = numStepSeg - smallerHalf
 
-	let numStepX, numStepY, stepDx, stepDy, arrDxDy = []
+	let numStepX: number, numStepY: number, stepDx: number, stepDy: number, arrDxDy: IPt[] = []
 	// most step segs along x or y axis?
 	switch(mostSegsXorY){
 		case 'x':
@@ -180,7 +177,6 @@ export function divLineEscalator(line, numSegOnLine, mostSegsXorY, outputFormat)
 			return prev
 		}, arrPts)
 		//use actual end pts instead calculated end pts
-
 		arrPts.pop()
 		arrPts.push([line.x2, line.y2])
 		return arrPts.map(function(pt){
@@ -217,24 +213,23 @@ export function divLineEscalator(line, numSegOnLine, mostSegsXorY, outputFormat)
 	}
 }
 
-export function divCircByNumSeg(center, radius, numPts, offset = 0){
-	const arrTValues = findRangeValues(0, 2*Math.PI, numPts, offset)
-	function findRangeValues(tFloor, tCeil, int, offset){
-		let unit = (tCeil - tFloor) / int
-		let arrTRange = [], val
-		for (let i = 0; i < int; i ++){
-			val = tFloor + offset + (unit * i)
-			if(val > tCeil) val = val - tCeil // if overshoot ceiling, circle back
-			arrTRange.push(val)
-		}
-		return arrTRange
+export function divCircByNumSeg(center: IPt, radius: number, numPts: number, offset: number = 0): IPt[] {
+	const arrTValues = findRangeValues(0, 2 * Math.PI, numPts, offset)
+	// xy coordinate of pts in ring
+	return arrTValues.map( tValue => ({
+		x: Math.cos(tValue) * radius + center.x,
+		y: Math.sin(tValue) * radius + center.y,
+	}))
+}
+
+export function findRangeValues(tFloor: number, tCeil: number, int: number, offset: number): number[] {
+	const unit: number = (tCeil - tFloor) / int
+	const arrTRange: number[] = []
+	let val: number
+	for (let i = 0; i < int; i++) {
+		val = tFloor + offset + (unit * i)
+		if (val > tCeil) val = val - tCeil // if overshoot ceiling, circle back
+		arrTRange.push(val)
 	}
-	// xy coordinate of pts in ring
-	// xy coordinate of pts in ring
-	return arrTValues.map(function(tValue){
-		return {
-			x: Math.cos(tValue) * radius + center.x,
-			y: Math.sin(tValue) * radius + center.y,
-		}
-	})
+	return arrTRange
 }
