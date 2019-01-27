@@ -1,9 +1,9 @@
-import { IPt3d } from '../_interfaces'
+import { IVec3d } from '../_interfaces'
 
-export function createPlaneOfPts(type: string, center: IPt3d, w: number, sideCount: number): Array<IPt3d> {
+export function createPlaneOfPts(type: string, center: IVec3d, w: number, sideCount: number): Array<IVec3d> {
 	const gap: number = w / (sideCount - 1)
-	const arrPts: Array<IPt3d> = []
-	const origin: IPt3d = { x:0, y:0, z:0 }
+	const arrPts: Array<IVec3d> = []
+	const origin: IVec3d = { x:0, y:0, z:0 }
 	switch (type) {
 		case 'yz':
 			origin.x = center.x
@@ -55,7 +55,7 @@ type Box = {
 	range: any
 }
 
-export function isPtInBox(pt: IPt3d, box: Box): boolean {
+export function isPtInBox(pt: IVec3d, box: Box): boolean {
 	// console.log('box.range.x',box.range.x)
 	// console.log('box.range.y',box.range.y)
 	// console.log('box.range.z',box.range.z)
@@ -68,19 +68,19 @@ export function isPtInBox(pt: IPt3d, box: Box): boolean {
 
 
 type Cube = {
-	arrPts: Array<IPt3d>
+	arrPts: Array<IVec3d>
 	oEdges: {
-		[index: string]: Array<IPt3d>
+		[index: string]: Array<IVec3d>
 	}
 	range: {
 		x: Object
 		y: Object
 		z: Object
 	}
-	arrEdges: Array<Array<IPt3d>>
+	arrEdges: Array<Array<IVec3d>>
 }
 
-export function createCube(center: IPt3d, width: number, length: number, height: number): Cube {
+export function createCube(center: IVec3d, width: number, length: number, height: number): Cube {
 
 	const w = width
 	const l = length ? length : width
@@ -135,10 +135,10 @@ export function createCube(center: IPt3d, width: number, length: number, height:
 }
 
 
-export function createCubeOfPts(center: IPt3d, w: number, sideCount: number): Array<IPt3d> {
-	const arrCubePts: Array<IPt3d> = []
+export function createCubeOfPts(center: IVec3d, w: number, sideCount: number): Array<IVec3d> {
+	const arrCubePts: Array<IVec3d> = []
 	const gap: number = w / (sideCount - 1)
-	const origin: IPt3d = {
+	const origin: IVec3d = {
 		x: center.x - w / 2,
 		y: center.y - w / 2,
 		z: center.z - w / 2,

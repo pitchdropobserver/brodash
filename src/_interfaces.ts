@@ -4,7 +4,7 @@ export interface IPt {
 	z?: number
 }
 
-export interface IPt3d {
+export interface IVec3d {
 	x: number
 	y: number
 	z: number

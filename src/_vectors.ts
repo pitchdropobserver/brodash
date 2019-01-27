@@ -1,50 +1,47 @@
+import { IVec3d, ILine, IPt } from './_interfaces'
 import { divLineByNumSeg, divLineEscalator } from './_subdivision'
 
-/* accomodates array/obj format
- * accomodates 2D/3D format
- */
-export function getMidPt(ptA, ptB){
-	if(ptA.hasOwnProperty('length')){ // array format
-		if (ptA.length === 3){
-			return [
-				ptA[0] + (ptB[0] - ptA[0]),
-				ptA[1] + (ptB[1] - ptA[1]),
-				ptA[2] + (ptB[2] - ptA[2])
-			]
-		} else {
-			return [
-				ptA[0] + (ptB[0] - ptA[0]),
-				ptA[1] + (ptB[1] - ptA[1])
-			]
-		}
-	} else { // object format
-		if (ptA.hasOwnProperty('z')){
-			return {
-				x:ptA.x + (ptB.x - ptA.x),
-				y:ptA.y + (ptB.y - ptA.y),
-				z:ptA.z + (ptB.z - ptA.z)
-			}
-		} else {
-			return {
-				x:ptA.x + (ptB.x - ptA.x),
-				y:ptA.y + (ptB.y - ptA.y)
-			}
-		}
+
+export function getMidPt(ptA: any, ptB: any): any {
+	return Array.isArray(ptA) && Array.isArray(ptB) ?
+		getMidPtArrFormat(ptA, ptB)
+			: getMidPtObjFormat(ptA, ptB)
+}
+
+function getMidPtArrFormat(ptA: number[], ptB: number[]): number[] {
+	return ptA.length === 3 ? [
+		ptA[0] + (ptB[0] - ptA[0]),
+		ptA[1] + (ptB[1] - ptA[1]),
+		ptA[2] + (ptB[2] - ptA[2])
+	] : [
+		ptA[0] + (ptB[0] - ptA[0]),
+		ptA[1] + (ptB[1] - ptA[1])
+	]
+}
+
+function getMidPtObjFormat(ptA: IPt, ptB: IPt): IPt {
+	return ptA.z && ptB.z ? { // if 3d point...
+		x: ptA.x + (ptB.x - ptA.x),
+		y: ptA.y + (ptB.y - ptA.y),
+		z: ptA.z + (ptB.z - ptA.z)
+	} : { // if 2d point...
+		x: ptA.x + (ptB.x - ptA.x),
+		y: ptA.y + (ptB.y - ptA.y)
 	}
 }
+
 
 // normalize vec2 to specified scale
-export function normalize(pt, scale) {
-	let norm = Math.sqrt(pt.x * pt.x + pt.y * pt.y)
-	if (norm != 0) { // as3 return 0,0 for a point of zero length
-		return {
+export function normalize(pt: IPt, scale: number): IPt {
+	let norm: number = Math.sqrt(pt.x * pt.x + pt.y * pt.y)
+	return norm === 0 ? 
+		{ x: 0, y: 0 } : {
 			x: scale * pt.x / norm,
-			y: scale * pt.y / norm,
+			y: scale * pt.y / norm
 		}
-	}
 }
 
-export function transformerLinearDiv3(line){
+export function transformerLinearDiv3(line: ILine){
 	return divLineByNumSeg(line,3)
 }
 
@@ -93,7 +90,7 @@ export function transformerIexCoil(op){ // center-aligned coil
 	// coil coordinates
 	const ptCoilStart = arrBasePts[1]
 	const numCoilPtsAll = numCoilPeaks * 2
-	const arrCoilPts = []
+	const arrCoilPts: IPt[] = []
 	const coilPtsAllDx = dx * arrPctSegments[1] / (numCoilPtsAll + 1)
 
 	for (let i = 0; i < numCoilPtsAll; i++) {
@@ -107,11 +104,11 @@ export function transformerIexCoil(op){ // center-aligned coil
 	return arrBasePts
 }
 
-export function transformerIexCoilBaseAligned(line){
+export function transformerIexCoilBaseAligned(line: ILine): IPt[] {
 	const dx = line.x2 - line.x1
 	const arrPctSegments = [0.2,0.3,0.5]  // arr of pct taken up by each segment, middle seg is coil
 
-	const arrBasePts = arrPctSegments.reduce(function(prev, pct, index){
+	const arrBasePts: IPt[] = arrPctSegments.reduce(function(prev, pct, index){
 		const pt = {
 			x:prev[index].x + pct * dx,
 			y:line.y1,
@@ -123,12 +120,12 @@ export function transformerIexCoilBaseAligned(line){
 		y:line.y1
 	}])
 	// coil coordinates
-	const ptCoilStart = arrBasePts[1]
-	const pctCoilH = 0.3
-	const numCoilPeaks = 4
-	const numCoilPtsAll = numCoilPeaks * 2 - 1
-	const arrCoilPts = []
-	const coilPtsAllDx = dx * arrPctSegments[1] / numCoilPtsAll
+	const ptCoilStart: IPt = arrBasePts[1]
+	const pctCoilH: number = 0.3
+	const numCoilPeaks: number = 4
+	const numCoilPtsAll: number = numCoilPeaks * 2 - 1
+	const arrCoilPts: IPt[] = []
+	const coilPtsAllDx: number = dx * arrPctSegments[1] / numCoilPtsAll
 
 	for (let i = 0; i < numCoilPtsAll; i++) {
 		let peak = (i % 2 === 0) ? 1 : 0
@@ -183,37 +180,37 @@ export function transformerNone(line){
 	]
 }
 
-export function getVecLen(v3) {
-	return Math.sqrt( v3.x*v3.x + v3.y*v3.y + v3.z*v3.z )
+export function getVecLen(vec3: IVec3d): number {
+	return Math.sqrt(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z)
 }
 
-export function setScalar(v3, len) {
-	normalizeVector(v3)
-	v3.x *= len
-	v3.y *= len
-	v3.z *= len
+export function setScalar(vec3: IVec3d, len: number): void {
+	normalizeVector(vec3)
+	vec3.x *= len
+	vec3.y *= len
+	vec3.z *= len
 }
 
-export function normalizeVector(v3) {
-	const vLen = getVecLen(v3)
-	v3.x /= vLen
-	v3.y /= vLen
-	v3.z /= vLen
+export function normalizeVector(vec3: IVec3d): void {
+	const vLen: number = getVecLen(vec3)
+	vec3.x /= vLen
+	vec3.y /= vLen
+	vec3.z /= vLen
 }
 
-export function subVectors(a, b) {
+export function subVectors(a: IVec3d, b: IVec3d): IVec3d {
 	return {
-		x:a.x - b.x,
-		y:a.y - b.y,
-		z:a.z - b.z,
+		x: a.x - b.x,
+		y: a.y - b.y,
+		z: a.z - b.z,
 	}
 }
 
-export function addVectors(a, b) {
+export function addVectors(a: IVec3d, b: IVec3d): IVec3d {
 	return {
-		x:a.x + b.x,
-		y:a.y + b.y,
-		z:a.z + b.z,
+		x: a.x + b.x,
+		y: a.y + b.y,
+		z: a.z + b.z,
 	}
 }
 
@@ -222,19 +219,23 @@ export function addVectors(a, b) {
  * @param {vector} a - obj or arr
  * @param {vector} b - obj or arr
  */
-export function crossVectors(a, b) {
-	if(a.hasOwnProperty('length')){
-		return [
-			a[1] * b[2] - a[2] * b[1],
-			a[2] * b[0] - a[0] * b[2],
-			a[0] * b[1] - a[1] * b[0],
-		]
-	}
-	if(a.hasOwnProperty('z')){
-		return [
-			a.y * b.z - a.z * b.y,
-			a.z * b.x - a.x * b.z,
-			a.x * b.y - a.y * b.x,
-		]
+export function crossVectors(a: any, b: any) : any {
+	return Array.isArray(a) && Array.isArray(b) ?
+		crossVectorsArrFormat(a, b)
+			: crossVectorsObjFormat(a, b)
+}
+
+function crossVectorsArrFormat(a: number[], b: number[]): number[] {
+	return [
+		a[1] * b[2] - a[2] * b[1],
+		a[2] * b[0] - a[0] * b[2],
+		a[0] * b[1] - a[1] * b[0],
+	]
+}
+function crossVectorsObjFormat(a: IVec3d, b: IVec3d): IVec3d{
+	return {
+		x: a.y * b.z - a.z * b.y,
+		y: a.z * b.x - a.x * b.z,
+		z: a.x * b.y - a.y * b.x,
 	}
 }

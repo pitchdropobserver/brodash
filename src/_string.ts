@@ -1,13 +1,14 @@
-export function splitSentenceByCharCount(strSentence, rowCharLimit) {
-	const arrWords = strSentence.split(' ')
-	const arrWordLen = arrWords.map(function (word) {
+export function splitSentenceByCharCount(strSentence: string, rowCharLimit: number): string[] {
+	const arrWords: string[] = strSentence.split(' ')
+	const arrWordLen: number[] = arrWords.map(function (word) {
 		return word.length
 	})
-	let rowCharCounter = 0,
-		countHolder,
-		arrRows = [],
-		arrThisRow = []
-	for (let i = 0; i < arrWords.length; i++) {
+	let i: number,
+		rowCharCounter: number = 0,
+		countHolder: number,
+		arrRows: string[][] = [],
+		arrThisRow: string[] = []
+	for (i = 0; i < arrWords.length; i++) {
 		// how many char this row will be with this word
 		countHolder = rowCharCounter + arrWordLen[i]
 		if (countHolder < rowCharLimit) { // if within char limit
