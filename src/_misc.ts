@@ -1,20 +1,4 @@
-/**
- * convert .val objects to regular objects
- * @param {Object} valObj { key:{ val:'abc' } }
- * @return {Object} { key: 'abc' }
- */
-export function valObjToRegObj(valObj){
-	const newObj = {}
-	for (let key in valObj) {
-		if (valObj.hasOwnProperty(key)) {
-			newObj[key] = valObj[key].val
-		}
-	}
-	return newObj
-}
-
-export function param(val, paramType, paramVals){
-
+export function param(val: any, paramType: string, paramVals: any): Object {
 	if(paramType === 'colorHex'){
 		return {
 			val,
@@ -49,7 +33,7 @@ export function param(val, paramType, paramVals){
 	}
 }
 
-export function isObjFolderOrParam(obj){
+export function isObjFolderOrParam(obj: any){
 	if(
 		obj &&
 		obj.hasOwnProperty('val') &&
@@ -87,19 +71,19 @@ export function rebuildFolder(obj){
 	},{})
 }
 
-const mapValTypes = {
-	'undefined': () => 'undefined',
-	'boolean': () => 'boolean',
-	'function': () => 'function',
-	'symbol': () => 'symbol',
-	'string': () => 'string',
-	'number': (val) => {
+const MAP_VAL_TYPES = {
+	'undefined': (): string => 'undefined',
+	'boolean': (): string => 'boolean',
+	'function': (): string => 'function',
+	'symbol': (): string => 'symbol',
+	'string': (): string => 'string',
+	'number': (val: number): string => {
 		switch (isFinite(val)) {
 			case true: return 'number'
 			case false: return 'number' // NaN, Infinity
 		}
 	},
-	'object': (val) => {
+	'object': (val: Object): string => {
 		if(val === null) return 'null'
 		switch (val.constructor) {
 			case Array: return 'array'
@@ -113,11 +97,11 @@ const mapValTypes = {
 	},
 }
 
-export function getValType(val){
-	return mapValTypes[typeof val].call(null, val)
+export function getValType(val: any): string {
+	return MAP_VAL_TYPES[typeof val].call(null, val)
 }
 
-export function isObj(val){
+export function isObj(val: any): boolean {
 	return getValType(val) === 'object'
 }
 
@@ -126,8 +110,8 @@ export function isObj(val){
  * Purge object's own keys
  * @param {Object} obj - An object
  */
-export function purgeOwnKeys(obj, shouldDelete) {
-	let key
+export function purgeOwnKeys(obj: Object, shouldDelete: boolean): void {
+	let key: PropertyKey
 	for (key in obj) { // purge own keys
 		if (obj.hasOwnProperty(key)) {
 			if (shouldDelete) { // delete ref and key...

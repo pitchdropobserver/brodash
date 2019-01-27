@@ -126,32 +126,6 @@ export function deepMergeTwoObjs(first, second, ...specialKeys){
 	}
 }
 
-
-
-export function deepMerge(){
-	const args = Array.from(arguments)
-	switch (args.length) {
-		case 0: // no argument provided...
-			throw 'Methods requires 2 or more objects!'
-		case 1: // one argument...
-			return args[0]
-		default: { // two or more arguments...
-			let first, current, next
-			for (let i = 0; i < args.length - 1; i++) {
-				first = args[0]
-				current = args[i]
-				next = args[i+1]
-				if (isObj(current) && isObj(next)){
-					Object.keys(current)
-
-
-				}				
-			}
-		}
-	}
-
-}
-
 // convert arr of pt-objs into arr of str
 export function arrPts2Str(arrPts){
 	return arrPts.map(function(pt){

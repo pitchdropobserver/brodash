@@ -1,40 +1,38 @@
 import { asyncPromLoop } from './_asyncPromLoop'
 
-var dt, smallestLatencyObserved = Infinity  // lowest record of roundTripLatency polled
+let dt: number, smallestLatencyObserved: number = Infinity  // lowest record of roundTripLatency polled
 
 class ClockPoll {
+	private emergencyStop = false
+// assume initial client/server clock diff of 0 between client, server, currentTime calcualted locally per component when needed, clockDiff is updated periodically when more accurate data becomes available
+	private clockDiff: number = 0
+	private subscribers: Array<any> = []
+	private testmode: { enabled: boolean, clockDiff: number } = {
+		enabled: false,
+		clockDiff: 0,
+	}
+	clockSyncLoop = undefined // reference
+	private readonly clockSyncCountMax: number = 10
+	private clockSyncCount = 0
+
 	constructor(){
-		this.last = undefined
-		this.dt = undefined
-		this.emergencyStop = false
-		// assume initial client/server clock diff of 0 between client, server, currentTime calcualted locally per component when needed, clockDiff is updated periodically when more accurate data becomes available
-		this.clockDiff = 0
-		this.subscribers = []
-		this.testmode = {
-			enabled:false,
-			clockDiff:0,
-		}
-		this.clockSyncLoop = undefined // reference
-		this.clockSyncCountMax = 10
-		this.clockSyncCount = 0
-	
 		this.animFrameUpdate = this.animFrameUpdate.bind(this)
 	}
 
-	stop(){
+	public stop(): void{
 		this.emergencyStop = true
 	}
 
-	start() {
+	public start(): void{
 		this.emergencyStop = false
 		this.animFrameUpdate()
 	}
 
-	animFrameUpdate(timeStamp) {
+	private animFrameUpdate(timeStamp?: number) {
 		const { clockDiff, subscribers, emergencyStop } = this
 		// TWEEN.update(timeStamp)
 		// animateItemsInQueue(timeStamp) //TEMP: to be removed
-
+		// TODO: above, parameter 'timeStamp' is optional, this assumes on first run, subscribes array is empty and does not fire, this is an dangerous assumption
 		subscribers.forEach((s) => {
 			dt = timeStamp - s.last // calculate individual dt's for each subscriber
 			if (dt >= s.frequency) {
@@ -54,22 +52,21 @@ class ClockPoll {
 		}
 	}
 
-	setTestmode(bool){
+	public setTestmode(bool: boolean): void{
 		this.testmode.enabled = bool
 		this.syncClockOneTime()
 	}
 
-	now(){
+	private now(): number {
 		return Date.now() - this.clockDiff
 	}
 
-	pollServerForTime(){
-		return fetch('https://api.iextrading.com/1.0/time').then(function (res) {
-			return res.json()
-		})
+	private pollServerForTime(): Promise<number>{
+		const TIME_ENDPOINT = 'https://api.iextrading.com/1.0/time'
+		return fetch(TIME_ENDPOINT).then(res => res.json())
 	}
 
-	syncClientServerClock(){
+	private syncClientServerClock(): Promise<void>{
 		const me = this
 		if (this.clockSyncCount < this.clockSyncCountMax) {
 			return this.syncClockOneTime().then(()=>{
@@ -89,16 +86,16 @@ class ClockPoll {
 		}
 	}
 
-	syncClockProgressively(){
+	public syncClockProgressively(): void{
 		this.clockSyncLoop = asyncPromLoop.call({
 			dichotomy: { ying: 'in', yang: 'out' },
 			prom: this.syncClientServerClock.bind(this),
 		}, 'in')
 	}
 
-	syncClockOneTime(){
+	public syncClockOneTime(): Promise<void>{
 		const me = this
-		const pollStart = Date.now()
+		const pollStart: number = Date.now()
 		return this.pollServerForTime().then(function calcLatency(polledServerTime) {
 			console.log('polledServerTime', polledServerTime)
 
@@ -118,7 +115,11 @@ class ClockPoll {
 		})
 	}
 
-	calcClockDiff(optn){
+	calcClockDiff(optn: {
+		clientTime: number
+		serverTime: number
+		roundTripLatency: number
+	}){
 		const { testmode } = this
 		const { clientTime, serverTime, roundTripLatency } = optn
 		if (testmode.enabled) {
@@ -132,13 +133,13 @@ class ClockPoll {
 		}
 	}
 
-	setClockDiff(val) {
+	public setClockDiff(val: number): void {
 		if (val) this.clockDiff = val
 	}
-	getClockDiff() {
+	public getClockDiff(): number {
 		return this.clockDiff
 	}
-	subscribe(callback, frequency, wait) {
+	public subscribe(callback: Function, frequency: number, wait: number): void {
 		const duplicate = this.subscribers.find(function (s) {
 			return callback === s.callback
 		})
@@ -151,8 +152,8 @@ class ClockPoll {
 			})
 		}
 	}
-	unsubscribe(callback) {
-		this.subscribers = this.subscribers.filter(function (s) {
+	public unsubscribe(callback: Function): void {
+		this.subscribers = this.subscribers.filter((s) => {
 			return callback !== s.callback
 		})
 	}
